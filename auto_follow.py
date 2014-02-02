@@ -19,11 +19,12 @@ Follow Bot library. If not, see http://www.gnu.org/licenses/.
 
 """
 
-
 import sqlite3
 from twitter import Twitter, OAuth, TwitterHTTPError
 import QUERIES
 from AUTH_INFO import *
+from DONT_FOLLOW import dont_follow
+
 
 def print_results(stats_dict):
     """
@@ -54,11 +55,18 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
     c = conn.cursor()
 
     stats = dict()
-    # search for query term, follow matched users and append user id to sqlite db      
+    # search for query term, follow matched users and append user id to sqlite db 
+
+    cnt = 0     
     for q in queries:
         result = t.search.tweets(q=q, result_type=result_type, count=count)
         following = set(t.friends.ids(screen_name=TWITTER_HANDLE)['ids'])
-        stats[q] = [0,0,0, len(following)]  
+        stats[q] = [0,0,0, len(following)] 
+
+        # also don't follow users that are in DONT_FOLLOW.py
+        users_dont_follow = set(t.users.lookup(screen_name=i)[0]['id'] for i in dont_follow)
+        following.union(users_dont_follow)   
+         
         # stats for found_friends, new_followers, followers_in_db, search_results
         for tweet in result['statuses']:
             try:
@@ -80,6 +88,10 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                     stats[q][0] += 1
                  
             except TwitterHTTPError as err:
+                c.execute('SELECT user_id FROM twitter_db WHERE user_id=%s' %tweet['user']['id'])
+                check=c.fetchone()
+                if not check:
+                    c.execute('INSERT INTO twitter_db (user_id) VALUES ("%s")' %tweet['user']['id'])
                 print("error: ", err)
     
                 # quit on error unless it's because someone blocked me
@@ -88,8 +100,10 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                     conn.close()
                     print(print_results(stats))
                     quit()
+            finally:
+                # always update database to accommodate for unexpected crashes
+                conn.commit()
 
-    conn.commit()
     conn.close()
     print(print_results(stats))
     return
