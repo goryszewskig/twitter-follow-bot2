@@ -2,6 +2,7 @@
 Copyright 2014 Sebastian Raschka and Randal S. Olson
 Original project: https://github.com/rhiever/twitter-follow-bot
 
+
 This file is part of the Twitter Follow Bot2 library.
 
 The Twitter Follow Bot2 library is free software: you can redistribute it and/or

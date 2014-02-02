@@ -1,7 +1,7 @@
-
 """
 Copyright 2014 Sebastian Raschka and Randal S. Olson
 Original project: https://github.com/rhiever/twitter-follow-bot
+
 
 This file is part of the Twitter Follow Bot2 library.
 
@@ -15,9 +15,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY o
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with the Twitter
-Follow Bot library. If not, see http://www.gnu.org/licenses/.
-
-"""
+Follow Bot library. If not, see http://www.gnu.org/licen
 
 import sqlite3
 from twitter import Twitter, OAuth, TwitterHTTPError

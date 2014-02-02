@@ -1,9 +1,6 @@
-
 """
-Copyright 2014 Sebastian Raschka
-
+Copyright 2014 Sebastian Raschka and Randal S. Olson
 Original project: https://github.com/rhiever/twitter-follow-bot
-Copyright 2014 Randal S. Olson
 
 
 This file is part of the Twitter Follow Bot2 library.
@@ -61,7 +58,7 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
     for q in queries:
         result = t.search.tweets(q=q, result_type=result_type, count=count)
         following = set(t.friends.ids(screen_name=TWITTER_HANDLE)['ids'])
-        stats[q] = [0,0,0, len(result)]  
+        stats[q] = [0,0,0, len(follwing)]  
         # stats for found_friends, new_followers, followers_in_db, search_results
         for tweet in result['statuses']:
             try:
