@@ -1,7 +1,10 @@
 
 """
-Copyright 2014 Sebastian Raschka and Randal S. Olson
+Copyright 2014 Sebastian Raschka
+
 Original project: https://github.com/rhiever/twitter-follow-bot
+Copyright 2014 Randal S. Olson
+
 
 This file is part of the Twitter Follow Bot2 library.
 
@@ -30,11 +33,9 @@ def print_results(stats_dict):
     Prints stats of how many people were followed.
 
     """
+    print('\nQuery,already_friends,already_in_db,new_followers,total_tweets_queried')
     for q in stats_dict.keys():
-        print('\nQuery: %s\nFriends in query: %s\n'\
-              'Users in DB: %s\nNew followers: %s\n'
-              'Number of tweets: %s\n'
-               %(q, stats_dict[q][0], stats_dict[q][2],
+        print('%s,%s,%s,%s,%s' %(q, stats_dict[q][0], stats_dict[q][2],
                  stats_dict[q][1], stats_dict[q][3])
              )
     return
@@ -60,7 +61,7 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
     for q in queries:
         result = t.search.tweets(q=q, result_type=result_type, count=count)
         following = set(t.friends.ids(screen_name=TWITTER_HANDLE)['ids'])
-        stats[q] = [0,0,0, len(queries)]  
+        stats[q] = [0,0,0, len(result)]  
         # stats for found_friends, new_followers, followers_in_db, search_results
         for tweet in result['statuses']:
             try:
