@@ -15,13 +15,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY o
 FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with the Twitter
-Follow Bot library. If not, see http://www.gnu.org/licen
+Follow Bot library. If not, see http://www.gnu.org/licenses/.
+
+"""
 
 import sqlite3
 from twitter import Twitter, OAuth, TwitterHTTPError
 from DONT_FOLLOW import dont_follow
 from AUTH_INFO import *
-
 
 
 def auto_follow_followers(db_file):
@@ -41,7 +42,7 @@ def auto_follow_followers(db_file):
     not_following_back = followers - following
     users_dont_follow = set(t.users.lookup(screen_name=i)[0]['id'] for i in dont_follow)
 
-    cnt += 1
+    cnt = 0
     for user_id in not_following_back:
         if user_id not in users_dont_follow:
             try:
