@@ -1,9 +1,6 @@
 """
-Copyright 2014 Sebastian Raschka
-
+Copyright 2014 Sebastian Raschka and Randal S. Olson
 Original project: https://github.com/rhiever/twitter-follow-bot
-Copyright 2014 Randal S. Olson
-
 
 This file is part of the Twitter Follow Bot2 library.
 

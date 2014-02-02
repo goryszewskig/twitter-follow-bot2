@@ -1,10 +1,7 @@
 
 """
-Copyright 2014 Sebastian Raschka
-
+Copyright 2014 Sebastian Raschka and Randal S. Olson
 Original project: https://github.com/rhiever/twitter-follow-bot
-Copyright 2014 Randal S. Olson
-
 
 This file is part of the Twitter Follow Bot2 library.
 
@@ -34,8 +31,12 @@ def print_results(stats_dict):
 
     """
     for q in stats_dict.keys():
-        print('\nQuery: %s\nFriends in query:%s\nUsers in DB:%s\nNew followers:%s\n'
-                %(stats_dict[q][0], stats_dict[q][2], stats_dict[q][1]))
+        print('\nQuery: %s\nFriends in query: %s\n'\
+              'Users in DB: %s\nNew followers: %s\n'
+              'Number of tweets: %s\n'
+               %(q, stats_dict[q][0], stats_dict[q][2],
+                 stats_dict[q][1], stats_dict[q][3])
+             )
     return
 
 
@@ -46,20 +47,21 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
     Adds new followers to SQLite database.    
 
     """
+    
+    #connect to twitter api
+    t = Twitter(auth=OAuth(OAUTH_TOKEN, OAUTH_SECRET, CONSUMER_KEY, CONSUMER_SECRET))
 
     #connect to sqlite database
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
-
-    #connect to twitter api
-    t = Twitter(auth=OAuth(OAUTH_TOKEN, OAUTH_SECRET, CONSUMER_KEY, CONSUMER_SECRET))
 
     stats = dict()
     # search for query term, follow matched users and append user id to sqlite db      
     for q in queries:
         result = t.search.tweets(q=q, result_type=result_type, count=count)
         following = set(t.friends.ids(screen_name=TWITTER_HANDLE)['ids'])
-        stats[q] = [0,0,0]  # stats for found_friends, new_followers, followers_in_db
+        stats[q] = [0,0,0, len(queries)]  
+        # stats for found_friends, new_followers, followers_in_db, search_results
         for tweet in result['statuses']:
             try:
                 if tweet['user']['screen_name'] != TWITTER_HANDLE and tweet['user']['id'] not in following:
@@ -79,11 +81,11 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                 else:
                     stats[q][0] += 1
                  
-            except TwitterHTTPError as e:
-                print("error: ", e)
+            except TwitterHTTPError as err:
+                print("error: ", err)
     
                 # quit on error unless it's because someone blocked me
-                if "blocked" not in str(e).lower():
+                if "blocked" not in str(err).lower():
                     conn.commit()
                     conn.close()
                     print(print_results(stats))
