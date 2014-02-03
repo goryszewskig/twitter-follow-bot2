@@ -32,10 +32,21 @@ def print_results(stats_dict):
 
     """
     print('\nQuery,already_friends,already_in_db,new_followers,total_tweets_queried')
+    totals = [0,0,0,0]
     for q in stats_dict.keys():
         print('%s,%s,%s,%s,%s' %(q, stats_dict[q][0], stats_dict[q][2],
                  stats_dict[q][1], stats_dict[q][3])
              )
+        totals[0] += stats_dict[q][0]
+        totals[2] += stats_dict[q][2]
+        totals[1] += stats_dict[q][1]
+        totals[3] += stats_dict[q][3]
+    print(30 * '-')
+    print('already friends: %s\nalready in db: %s\n'\
+          'new followers: %s\n total tweets queried: %s'\
+            %(totals[0], totals[2], totals[1], totals[3]))
+    print(30 * '-')
+
     return
 
 
