@@ -32,10 +32,21 @@ def print_results(stats_dict):
 
     """
     print('\nQuery,already_friends,already_in_db,new_followers,total_tweets_queried')
+    totals = [0,0,0,0]
     for q in stats_dict.keys():
         print('%s,%s,%s,%s,%s' %(q, stats_dict[q][0], stats_dict[q][2],
                  stats_dict[q][1], stats_dict[q][3])
              )
+        totals[0] += stats_dict[q][0]
+        totals[2] += stats_dict[q][2]
+        totals[1] += stats_dict[q][1]
+        totals[3] += stats_dict[q][3]
+    print(30 * '-')
+    print('already friends: %s\nalready in db: %s\n'\
+          'new followers: %s\ntotal tweets queried: %s'\
+            %(totals[0], totals[2], totals[1], totals[3]))
+    print(30 * '-')
+
     return
 
 
@@ -78,7 +89,7 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                     if not check:
                         t.friendships.create(user_id=tweet['user']['id'])
                         following.update(set([tweet['user']['id']]))
-                        print('following: %s' % tweet['user']['screen_name'])
+                        print('following %s' % tweet['user']['screen_name'])
                         # add new ID to sqlite database
                         c.execute('INSERT INTO twitter_db (user_id) VALUES ("%s")' %tweet['user']['id'])
                         stats[q][1] += 1
