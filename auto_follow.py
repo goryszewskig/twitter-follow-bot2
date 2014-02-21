@@ -92,6 +92,7 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                         print('following %s' % tweet['user']['screen_name'])
                         # add new ID to sqlite database
                         c.execute('INSERT INTO twitter_db (user_id) VALUES ("%s")' %tweet['user']['id'])
+                        conn.commit()
                         stats[q][1] += 1
                     else:
                         stats[q][2] += 1
