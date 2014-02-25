@@ -43,7 +43,7 @@ def print_results(stats_dict):
         totals[3] += stats_dict[q][3]
     print(30 * '-')
     print('already friends: %s\nalready in db: %s\n'\
-          'new followers: %s\ntotal tweets queried: %s'\
+          'new users following: %s\ntotal tweets queried: %s'\
             %(totals[0], totals[2], totals[1], totals[3]))
     print(30 * '-')
 
