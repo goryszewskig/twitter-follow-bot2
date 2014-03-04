@@ -26,7 +26,7 @@ You will need to install Python's `twitter` library first:
 or
 ```pip install twitter```
     
-The twitter module can also be manually downloaded from [https://pypi.python.org/pypi/twitter](https://pypi.python.org/pypi/twitter)https://pypi.python.org/pypi/twitter and installed via
+The twitter module can also be manually downloaded from [https://pypi.python.org/pypi/twitter](https://pypi.python.org/pypi/twitter) and installed via
 ```python setup.py install```
 from within the unpacked directory.
     
