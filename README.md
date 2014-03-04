@@ -23,6 +23,12 @@ I hold no liability for what you do with this script or what happens to you by u
 You will need to install Python's `twitter` library first:
 
     easy_install twitter
+or
+    pip install twitter
+    
+The twitter module can also be manually downloaded from [https://pypi.python.org/pypi/twitter](https://pypi.python.org/pypi/twitter)https://pypi.python.org/pypi/twitter and installed via
+    python setup.py install
+from within the unpacked directory.
     
 You will also need to create an app account on https://dev.twitter.com/apps
 
