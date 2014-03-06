@@ -21,19 +21,24 @@ Follow Bot library. If not, see http://www.gnu.org/licenses/.
 
 
 import sqlite3
+import sys
 from twitter import Twitter, OAuth, TwitterHTTPError
 from KEEP_FOLLOWING import keep_following
 from AUTH_INFO import *
 
 
-def auto_unfollow(db_file):
+def auto_unfollow(db_file, followed_longer_than=0):
     """ 
        Unfollows users that are not following back and add them to
        the SQLite database.
        Keeps following uses that are in the KEEP_FOLLOWING list.
 
-    """
+    Keyword Arguments:
+        db_file (str): Path to the .sqlite database file
+        older_longer_than (int): unfollows all users that are not following back and were
+             followed >= x days ago.
 
+    """
     #connect to sqlite database
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
@@ -54,26 +59,30 @@ def auto_unfollow(db_file):
     for userid in not_following_back:
         try:
             if userid not in users_keep_following:
-                t.friendships.destroy(user_id=userid)
-                cnt += 1
-                c.execute('SELECT user_id FROM twitter_db WHERE user_id=%s' %userid)
+                c.execute('SELECT user_id FROM twitter_db WHERE user_id={} '
+                          'AND DATE("now") - followed_date >= {}'\
+                          .format(userid, followed_longer_than))
                 check=c.fetchone()
-                if not check:              
-                    c.execute('INSERT INTO twitter_db (user_id) VALUES ("%s")' %userid)              
-                print('unfollowed: %s' % t.users.lookup(user_id=userid)[0]['screen_name'])
+                if check:
+                    t.friendships.destroy(user_id=userid)
+                    c.execute('UPDATE twitter_db SET unfollowed_date=DATE("now") '
+                              'WHERE user_id={}'.format(userid))  
+                    cnt += 1 
+                print('unfollowed: {}'.format(t.users.lookup(user_id=userid)[0]['screen_name']))
         except Exception as e:
             print(e)
             conn.commit()
-            conn.close()
-            print('Unfollowed %s users' %cnt)
-            quit()
     
     conn.commit()
     conn.close()
-    print('Unfollowed %s users' %cnt)  
+    print('Unfollowed {} users'.format(cnt))  
     return
 
 if __name__ == "__main__":
-                       
+    
+    followed_longer_than = 0
+    if len(sys.argv) > 1:
+        followed_longer_than = int(sys.argv[1])
+                   
     sqlite_file = './follow_db.sqlite'
-    auto_unfollow(sqlite_file)
+    auto_unfollow(sqlite_file, followed_longer_than)

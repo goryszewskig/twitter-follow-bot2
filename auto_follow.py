@@ -84,14 +84,14 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                 if tweet['user']['screen_name'] != TWITTER_HANDLE and tweet['user']['id'] not in following:
                     
                     # check if user ID is already in sqlite database
-                    c.execute('SELECT user_id FROM twitter_db WHERE user_id=%s' %tweet['user']['id'])
+                    c.execute('SELECT user_id FROM twitter_db WHERE user_id={}'.format(tweet['user']['id']))
                     check=c.fetchone()
                     if not check:
                         t.friendships.create(user_id=tweet['user']['id'])
                         following.update(set([tweet['user']['id']]))
-                        print('following %s' % tweet['user']['screen_name'])
+                        print('following {}'.format(tweet['user']['screen_name']))
                         # add new ID to sqlite database
-                        c.execute('INSERT INTO twitter_db (user_id) VALUES ("%s")' %tweet['user']['id'])
+                        c.execute('INSERT INTO twitter_db (user_id, followed_date) VALUES ("%s", DATE("now"))' %tweet['user']['id'])
                         conn.commit()
                         stats[q][1] += 1
                     else:
@@ -100,10 +100,11 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                     stats[q][0] += 1
                  
             except TwitterHTTPError as err:
-                c.execute('SELECT user_id FROM twitter_db WHERE user_id=%s' %tweet['user']['id'])
+                c.execute('SELECT user_id FROM twitter_db WHERE user_id={}'.format(tweet['user']['id']))
                 check=c.fetchone()
                 if not check:
-                    c.execute('INSERT INTO twitter_db (user_id) VALUES ("%s")' %tweet['user']['id'])
+                    c.execute('INSERT INTO twitter_db (user_id, followed_date) VALUES ("%s", DATE("now"))' %tweet['user']['id'])
+                    conn.commit()
                 print("error: ", err)
     
                 # quit on error unless it's because someone blocked me

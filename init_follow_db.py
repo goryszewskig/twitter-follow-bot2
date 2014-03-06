@@ -22,7 +22,8 @@ Follow Bot library. If not, see http://www.gnu.org/licenses/.
 import sqlite3
 
 def create_blank_db(db_file):
-    """ Creates a new SQLite database with one field as primary key 
+    """ Creates a new SQLite database with one field as primary key and 2 columns
+        that keeps track when a user was followed and unfollowed, respectively.
     Args:
         db_file (str): file name for the new database
     Returns the total number of changes made to the data base.
@@ -30,7 +31,7 @@ def create_blank_db(db_file):
     """ 
     conn = sqlite3.connect(db_file)
     c = conn.cursor()
-    c.execute('CREATE TABLE twitter_db (user_id TEXT PRIMARY KEY)')
+    c.execute('CREATE TABLE twitter_db (user_id TEXT PRIMARY KEY, followed_date, unfollowed_date)')
     # TEXT because some IDs have trailing 0s
     changes = conn.total_changes 
     conn.commit()

@@ -58,7 +58,8 @@ Open the file `AUTH_INFO.py` and add your Twitter information
 **2)**  
 Go into the script directory and run  
 `python3 init_follow_db.py`  
-to create a new SQLite3 database that will keep track of the Twitter UserIDs that you have already followed of unfollowed.
+to create a new SQLite3 database that will keep track of the Twitter UserIDs that you have already followed of unfollowed.  
+Additionally, two columns `followed_date` and `unfollowed_date` will keep track of the date when a new user was followed or unfollowed, respectively.  
 By default the SQLite database will be created as "follow_db.sqlite" in the script directory.
 
 
@@ -114,6 +115,10 @@ Via the terminal, execute the script in the script's directory:
 	`python3 auto_unfollow.py`
 
 New people you are unfollowing will be added to the SQLite database so you don't follow them twice once you unfollowed them.
+
+Now supports time-depending unfollowing of users. If a second command line argument (integer) is provided upon script execution, e.g.,  
+    ```python3 auto_unfollow.py 3```   
+only users are unfollowed that you have started following 3 days ago or longer.
 
 ####Automatically follow any user back who has followed you
 
