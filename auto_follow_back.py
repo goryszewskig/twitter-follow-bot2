@@ -48,13 +48,12 @@ def auto_follow_followers(db_file):
             try:
                 t.friendships.create(user_id=user_id)
                 cnt += 1                
-            
-                # check if user ID is already in sqlite database
-                c.execute('SELECT user_id FROM twitter_db WHERE user_id=%s' %user_id)
-                check=c.fetchone()
-                if not check:              
-                    c.execute('INSERT INTO twitter_db (user_id) VALUES ("%s")' %user_id)              
-                print("followed: %s" % t.users.lookup(user_id=user_id)[0]['screen_name'])
+                c.execute('INSERT OR IGNORE INTO twitter_db (user_id, followed_date) ' 
+                    'VALUES ("{}", DATE("now"))'.format(user_id))
+                c.execute('UPDATE twitter_db SET followed_date=DATE("now") '
+                        'WHERE user_id={}'.format(user_id))
+                conn.commit()
+                print("followed: {}".format(t.users.lookup(user_id=user_id)[0]['screen_name']))
 
             except Exception as e:
                 print(e)

@@ -19,7 +19,6 @@ Follow Bot library. If not, see http://www.gnu.org/licenses/.
 
 """
 
-
 import sqlite3
 import sys
 from twitter import Twitter, OAuth, TwitterHTTPError
@@ -56,19 +55,23 @@ def auto_unfollow(db_file, followed_longer_than=0):
     # unfollow users
     not_following_back = following - followers
     cnt = 0
-    for userid in not_following_back:
+    for user_id in not_following_back:
         try:
-            if userid not in users_keep_following:
+            if user_id not in users_keep_following:
+                c.execute('INSERT OR IGNORE INTO twitter_db (user_id)' 
+                        'VALUES ("{}")'.format(user_id))
                 c.execute('SELECT user_id FROM twitter_db WHERE user_id={} '
                           'AND DATE("now") - followed_date >= {}'\
-                          .format(userid, followed_longer_than))
-                check=c.fetchone()
+                          .format(user_id, followed_longer_than))
+                check = c.fetchone()
                 if check:
-                    t.friendships.destroy(user_id=userid)
+                    t.friendships.destroy(user_id=user_id)
                     c.execute('UPDATE twitter_db SET unfollowed_date=DATE("now") '
-                              'WHERE user_id={}'.format(userid))  
-                    cnt += 1 
-                print('unfollowed: {}'.format(t.users.lookup(user_id=userid)[0]['screen_name']))
+                        'WHERE user_id={}'.format(user_id))
+                conn.commit()
+                cnt += 1 
+                print('unfollowed: {}'.format(t.users.lookup(user_id=user_id)[0]['screen_name']))
+                                                                              
         except Exception as e:
             print(e)
             conn.commit()

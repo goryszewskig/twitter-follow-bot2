@@ -91,7 +91,8 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                         following.update(set([tweet['user']['id']]))
                         print('following {}'.format(tweet['user']['screen_name']))
                         # add new ID to sqlite database
-                        c.execute('INSERT INTO twitter_db (user_id, followed_date) VALUES ("%s", DATE("now"))' %tweet['user']['id'])
+                        c.execute('INSERT INTO twitter_db (user_id, followed_date) ' 
+                        'VALUES ("{}", DATE("now"))'.format(tweet['user']['id']))
                         conn.commit()
                         stats[q][1] += 1
                     else:
@@ -106,6 +107,7 @@ def auto_follow_loop(queries, db_file, count=10, result_type="recent"):
                     c.execute('INSERT INTO twitter_db (user_id, followed_date) VALUES ("%s", DATE("now"))' %tweet['user']['id'])
                     conn.commit()
                 print("error: ", err)
+                sys.exit()
     
                 # quit on error unless it's because someone blocked me
                 if "blocked" not in str(err).lower():
