@@ -64,14 +64,15 @@ def auto_unfollow(db_file, followed_longer_than=0):
                           'AND DATE("now") - followed_date >= {}'\
                           .format(user_id, followed_longer_than))
                 check = c.fetchone()
+                print(check)
                 if check:
                     t.friendships.destroy(user_id=user_id)
                     c.execute('UPDATE twitter_db SET unfollowed_date=DATE("now") '
                         'WHERE user_id={}'.format(user_id))
+                    print('unfollowed: {}'.format(t.users.lookup(user_id=user_id)[0]['screen_name']))
+                    cnt += 1 
                 conn.commit()
-                cnt += 1 
-                print('unfollowed: {}'.format(t.users.lookup(user_id=user_id)[0]['screen_name']))
-                                                                              
+                                                                                                              
         except Exception as e:
             print(e)
             conn.commit()
@@ -84,7 +85,7 @@ def auto_unfollow(db_file, followed_longer_than=0):
 if __name__ == "__main__":
     
     followed_longer_than = 0
-    if len(sys.argv) > 1:
+    if len(sys.argv) >= 2:
         followed_longer_than = int(sys.argv[1])
                    
     sqlite_file = './follow_db.sqlite'
