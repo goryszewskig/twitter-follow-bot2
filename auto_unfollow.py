@@ -64,7 +64,6 @@ def auto_unfollow(db_file, followed_longer_than=0):
                           'AND DATE("now") - followed_date >= {}'\
                           .format(user_id, followed_longer_than))
                 check = c.fetchone()
-                print(check)
                 if check:
                     t.friendships.destroy(user_id=user_id)
                     c.execute('UPDATE twitter_db SET unfollowed_date=DATE("now") '
