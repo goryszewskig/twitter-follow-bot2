@@ -20,6 +20,7 @@ Follow Bot library. If not, see http://www.gnu.org/licenses/.
 """
 
 import sqlite3
+import sys
 from twitter import Twitter, OAuth, TwitterHTTPError
 import QUERIES
 from AUTH_INFO import *
